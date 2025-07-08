@@ -60,15 +60,16 @@ function M.edit_pinned_sessions()
     end
     if not buf then
         buf = vim.api.nvim_create_buf(false, true)
+        vim.api.nvim_buf_set_option(buf, 'buftype', 'acwrite')
+        vim.api.nvim_buf_set_option(buf, 'modifiable', true)
+        vim.api.nvim_buf_set_option(buf, 'filetype', 'hartoon_tmux')
         vim.api.nvim_buf_set_name(buf, bufname)
         vim.api.nvim_buf_set_lines(buf, 0, -1, false, sessions)
     else
-        -- If buffer exists, reload its content from file
+        -- If buffer exists, ensure it's modifiable before setting lines
+        vim.api.nvim_buf_set_option(buf, 'modifiable', true)
         vim.api.nvim_buf_set_lines(buf, 0, -1, false, sessions)
     end
-    vim.api.nvim_buf_set_option(buf, 'buftype', 'acwrite')
-    vim.api.nvim_buf_set_option(buf, 'modifiable', true)
-    vim.api.nvim_buf_set_option(buf, 'filetype', 'hartoon_tmux')
     -- Floating window
     local width = math.floor(vim.o.columns * 0.4)
     local height = math.max(5, #sessions)

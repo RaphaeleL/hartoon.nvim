@@ -16,7 +16,7 @@ Add to your Neovim plugin manager (example for lazy.nvim):
 
 ```lua
 {
-    dir = 'RaphaeleL/hartoon.nvim',
+    'RaphaeleL/hartoon.nvim',
     dependencies = {
         'nvim-lua/plenary.nvim',
         'nvim-telescope/telescope.nvim',
