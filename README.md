@@ -17,6 +17,9 @@ Add to your Neovim plugin manager (example for lazy.nvim):
 ```lua
 {
     'RaphaeleL/hartoon.nvim',
+    dependencies = {
+        'nvim-telescope/telescope.nvim',
+    },
     config = function()
         require('hartoon').setup()
     end,
