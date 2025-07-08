@@ -8,7 +8,7 @@ A Harpoon-inspired Neovim plugin for managing and jumping to your favorite tmux 
 - Edit pinned sessions in a floating, editable popup window
 - Jump to any pinned session with a single function or keymap
 - Telescope picker for all tmux sessions
-- All actions use `tms -c <session>` to switch sessions
+- All actions use direct tmux commands to switch sessions
 
 ## Installation
 
@@ -16,7 +16,6 @@ Add to your Neovim plugin manager (example for lazy.nvim):
 
 ```lua
 {
-    -- https://github.com/RaphaeleL/tms needs to be installed
     'RaphaeleL/hartoon.nvim',
     config = function()
         require('hartoon').setup()
@@ -25,7 +24,7 @@ Add to your Neovim plugin manager (example for lazy.nvim):
         { '<leader>ht', '<cmd>HartoonTmuxSessions<cr>', desc = 'List tmux sessions' },
         { '<leader>hta', '<cmd>HartoonPinTmuxSession<cr>', desc = 'Pin current tmux session' },
         { '<leader>htm', '<cmd>HartoonEditPinnedTmux<cr>', desc = 'Edit pinned tmux sessions' },
-        { '<leader>ta', '<cmd>HartooJumpTo1<cr>', desc = 'Jump to pinned tmux session 1' },
+        { '<leader>ta', '<cmd>HartoonJumpTo1<cr>', desc = 'Jump to pinned tmux session 1' },
         { '<leader>ts', '<cmd>HartoonJumpTo2<cr>', desc = 'Jump to pinned tmux session 2' },
         { '<leader>td', '<cmd>HartoonJumpTo3<cr>', desc = 'Jump to pinned tmux session 3' },
     },
@@ -67,7 +66,6 @@ vim.keymap.set('n', '<leader>h3', ':HartoonJumpTo3<cr>')
 
 ## Requirements
 
-- [tms](https://github.com/RaphaeleL/tms) command in your PATH
 - [tmux](https://github.com/tmux/tmux)
 - [Telescope.nvim](https://github.com/nvim-telescope/telescope.nvim)
 

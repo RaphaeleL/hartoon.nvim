@@ -26,6 +26,34 @@ local function write_sessions(sessions)
     end
 end
 
+-- Helper function to switch to a tmux session
+local function switch_to_tmux_session(session_name)
+    if not session_name or session_name == '' then
+        return
+    end
+    
+    -- Check if tmux is running
+    local tmux_running = vim.fn.system('pgrep tmux')
+    local in_tmux = vim.env.TMUX ~= nil
+    
+    -- Check if session exists
+    local session_exists = vim.fn.system('tmux list-sessions -F "#{session_name}" | grep -Fx "' .. session_name .. '"')
+    
+    if session_exists == '' then
+        -- Session doesn't exist, create it
+        vim.fn.jobstart('tmux new-session -ds "' .. session_name .. '"', { detach = true })
+    end
+    
+    -- Switch to session
+    if in_tmux then
+        -- We're inside tmux, switch client
+        vim.fn.jobstart('tmux switch-client -t "' .. session_name .. '"', { detach = true })
+    else
+        -- We're outside tmux, attach to session
+        vim.fn.jobstart('tmux attach-session -t "' .. session_name .. '"', { detach = true })
+    end
+end
+
 function M.pin_current_tmux_session()
     local handle = io.popen("tmux display-message -p '#S'")
     local session = handle:read("*l")
@@ -79,6 +107,7 @@ function M.edit_pinned_sessions()
         relative = 'editor',
         width = width,
         height = height,
+        title = 'Hartoon - Pinned Tmux Sessions',
         row = row,
         col = col,
         style = 'minimal',
@@ -98,7 +127,7 @@ function M.edit_pinned_sessions()
     vim.keymap.set('n', '<CR>', function()
         local line = vim.api.nvim_get_current_line()
         if line and line ~= '' then
-            vim.fn.jobstart('tms -c ' .. line, { detach = true })
+            switch_to_tmux_session(line)
         end
         vim.api.nvim_win_close(win, true)
     end, { buffer = buf, desc = 'Swap to tmux session and close popup' })
@@ -131,7 +160,7 @@ function M.telescope_tmux_sessions()
                 actions.close(prompt_bufnr)
                 local selection = action_state.get_selected_entry()
                 if selection and selection[1] then
-                    vim.fn.jobstart('tms -c ' .. selection[1], { detach = true })
+                    switch_to_tmux_session(selection[1])
                 end
             end)
             return true
@@ -143,7 +172,7 @@ function M.jump(idx)
     local sessions = read_sessions()
     local session = sessions[idx]
     if session and session ~= '' then
-        vim.fn.jobstart('tms -c ' .. session, { detach = true })
+        switch_to_tmux_session(session)
     else
         vim.notify('No session at index ' .. tostring(idx), vim.log.levels.ERROR)
     end
